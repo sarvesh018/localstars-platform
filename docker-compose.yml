@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres-auth
+    env_file:
+      - ./services/auth-service/.env
+
+  postgres-auth:
+    image: postgres:16
+    container_name: postgres-auth
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
