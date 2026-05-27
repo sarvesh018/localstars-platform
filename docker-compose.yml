@@ -23,5 +23,27 @@ services:
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
 
+  shop-service:
+    build: ./services/shop-service
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgres-shop
+    env_file:
+      - ./services/shop-service/.env
+
+  postgres-shop:
+    image: postgres:16
+    container_name: postgres-shop
+    environment:
+      POSTGRES_DB: shop_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_shop_data:/var/lib/postgresql/data
+
 volumes:
   postgres_auth_data:
+  postgres_shop_data:
