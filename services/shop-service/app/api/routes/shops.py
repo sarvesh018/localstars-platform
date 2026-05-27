@@ -2,17 +2,15 @@ from fastapi import (
     APIRouter,
     Depends
 )
-
 from sqlalchemy.orm import Session
-
+from app.repositories.shop_repository import (
+    update_shop_rating
+)
 from app.schemas.shop import ShopCreate
-
 from app.core.database import get_db
-
 from app.core.dependencies import (
     get_current_user
 )
-
 from app.repositories.shop_repository import (
     create_shop,
     get_all_shops
@@ -46,3 +44,25 @@ def get_shops(
     shops = get_all_shops(db)
 
     return shops
+
+@router.put("/{shop_id}/rating")
+def update_rating(
+    shop_id: int,
+    rating: float,
+    db: Session = Depends(get_db)
+):
+    updated_shop = update_shop_rating(
+        db,
+        shop_id,
+        rating
+    )
+
+    if not updated_shop:
+        return {
+            "message": "Shop not found"
+        }
+
+    return {
+        "message": "Shop rating updated",
+        "rating": updated_shop.rating
+    }

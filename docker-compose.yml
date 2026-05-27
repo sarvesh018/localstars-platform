@@ -44,6 +44,39 @@ services:
     volumes:
       - postgres_shop_data:/var/lib/postgresql/data
 
+  review-service:
+    build: ./services/review-service
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres-review
+    env_file:
+      - ./services/review-service/.env
+
+  postgres-review:
+    image: postgres:16
+    container_name: postgres-review
+    environment:
+      POSTGRES_DB: review_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_review_data:/var/lib/postgresql/data
+
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth-service
+      - shop-service
+      - review-service
+    env_file:
+      - ./services/gateway/.env
+      
 volumes:
   postgres_auth_data:
   postgres_shop_data:
+  postgres_review_data:

@@ -22,6 +22,24 @@ def create_shop(
 
     return shop
 
+def update_shop_rating(
+    db: Session,
+    shop_id: int,
+    rating: float
+):
+    shop = db.query(Shop).filter(
+        Shop.id == shop_id
+    ).first()
+
+    if not shop:
+        return None
+
+    shop.rating = rating
+
+    db.commit()
+    db.refresh(shop)
+
+    return shop
 
 def get_all_shops(db: Session):
     return db.query(Shop).all()
